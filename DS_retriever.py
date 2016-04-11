@@ -5,6 +5,7 @@
 # Examples: 
 # python DS_retriever.py 44.338398 -75.919733 10
 # python DS_retriever.py 26.448723 -80.066601 10 
+# python DS_retriever.py 42.60132 -83.11994 10   
 import sys
 from geolocation import GeoLocation
 import json

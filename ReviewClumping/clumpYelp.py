@@ -49,7 +49,7 @@ def tfIdf(data, minWordSize = 3):
 # Reads files and prints the most common words of size n
 def main():
   lists = {}
-  with open('yelpReviewsCombined.json') as data_file:    
+  with open('yelpReviewsAggregate.json') as data_file:    
     data = json.load(data_file)
     lists = tfIdf(data)
   top5 = {}

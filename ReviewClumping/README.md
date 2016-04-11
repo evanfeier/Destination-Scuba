@@ -9,7 +9,7 @@ combineYelp.py is utilized before the keyword extraction.  It aggregates reviews
 
 Next, the clumping algorithm is run to find the top keywords.
 
-combineFullYelp.py then allows data downloaded from the Yelp API to be combined with our review into a single json file.
+combineFullYelp.py then allows data downloaded from the Yelp API to be combined with our review keywords into a single json file.
 
 **DiveBuddy**
 

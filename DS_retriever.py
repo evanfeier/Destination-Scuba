@@ -22,9 +22,9 @@ def main():
     n = int(sys.argv[3])
     
     (sites, businesses) = retrieve_top_n_sites_businesses(latitude, longitude, n, "most reviewed")
-    print "**Top " + str(n) + " sites**\n"
+    print "**Top " + str(n) + " sites (within 45 miles)**\n"
     pprint(sites)
-    print "\n**Top " + str(n) + " businesses**\n"
+    print "\n**Top " + str(n) + " businesses (within 45 miles)**\n"
     pprint(businesses)
 
 def retrieve_top_n_sites_businesses(latitude, longitude, n, select):

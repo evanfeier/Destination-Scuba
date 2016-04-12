@@ -1,7 +1,9 @@
 ##Finding Keywords within Reviews
 
 These scripts find the keywords within the reviews.  They then store the top five keywords in a new JSON file along with the rest of the reviews.
-It currently uses TFIDF for both single words and biwords.
+It currently uses TFIDF for single words.  However, we will be working on making it better by adding biwords and other tactics to ensure good keywords are returned.
+
+All of these scripts do not require arguments, but rather the files are hardcoded in the code to ensure proper order of execution.
 
 **Yelp**
 

@@ -1,0 +1,227 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel=stylesheet type=text/css href="{{ url_for('static', filename='style.css') }}">
+    <script type="text/javascript" src="{{ url_for('static', filename='Queue.js') }}"></script>
+    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+    <script type="text/javascript" src="http://maps.googleapis.com/maps/api/js?sensor=false"></script>
+    <title>Destination: Scuba</title>
+</head>
+<body>
+    {% if q %}
+        <div class="header">
+            <a href="/" class="siteName">Destination: Scuba</a>
+            <form action="" method=get class=search-box>
+                <input class="search-field" type=text name=q size=30 value="{{ q }}">
+                <input class="search-button" type=submit value="Search">
+            </form>
+        </div>
+        <div class="map">
+            <div id="map" style="width:100%; height:100%;"></div>
+            <div id="mapToggle" style="background-image: url({{ url_for('static', filename='fullscreen_icon.png') }});"></div>
+        </div>
+        <div id="core">
+            <div id="content1" class="column">
+                <div class="columnHeader">Sites</div>
+                <ul class=search-results>
+                {%- for site in sites %}
+                    <li class="search-result">
+                        <a class=title href="{{ site[2] }}">{{ site[1] }}</a> &nbsp;&nbsp;&nbsp;<span class=rating>{%- for i in range(site[5]) %}★{%- endfor %}</span>
+                        {%- if site[4] %}
+                        <br><span class=location>Location: {{ site[4] }}</span>
+                        {%- endif %}
+                        {%- if site[3] %}
+                        <br><span class=description>{{ site[3] }}</span>
+                        {%- endif %}
+                {%- else %}
+                  <li><em>We did not find anything :-(</em>
+                {%- endfor %}
+                </ul>
+            </div>
+            <div id="content2" class="column">
+                <div class="columnHeader">Businesses</div>
+                <ul class=search-results>
+                {%- for business in businesses %}
+                    <li class="search-result">
+                        <a class=title href="{{ business[2] }}">{{ business[1] }}</a> &nbsp;&nbsp;&nbsp;<span class=rating>{%- for i in range(business[5]) %}★{%- endfor %}</span>
+                        {%- if business[4] %}
+                        <br><span class=location>Location: {{ business[4] }}</span>
+                        {%- endif %}
+                        {%- if business[3] %}
+                        <br><span class=description>{{ business[3] }}</span>
+                        {%- endif %}
+                {%- else %}
+                  <li><em>We did not find anything :-(</em>
+                {%- endfor %}
+                </ul>
+            </div>
+        </div>
+        <script type="text/javascript">
+            window.onload = function() {
+                var location = {{ locationlist|safe }};
+                var numSites = 0;
+                
+                var myOptions = {
+                    center: new google.maps.LatLng({{ latitude }},{{ longitude }}),
+                    zoom: 8,
+                    mapTypeId: google.maps.MapTypeId.ROADMAP,
+                    disableDefaultUI: true
+                };
+            
+                var map = new google.maps.Map(document.getElementById("map"), myOptions);
+                
+                var marker = new google.maps.Marker({
+                    position: new google.maps.LatLng({{ latitude }},{{ longitude }}),
+                    map: map,
+                    title: 'Destination'
+                });
+                var markers = []
+                
+                var infowindow = new google.maps.InfoWindow();
+                for (var i = 0; i < location.length; i++) {
+                    var image = normalSiteIcon();
+                    if (location[i][2].indexOf("yelp") != -1) {
+                        image = normalBusinessIcon();
+                    }
+                    else {
+                        numSites += 1;
+                    }
+                    var marker = new google.maps.Marker({
+                        position: new google.maps.LatLng(location[i][6], location[i][7]),
+                        map: map,
+                        icon: image,
+                        title: location[i][1]
+                    });
+                    google.maps.event.addListener(marker, 'click', (function (marker, i) {
+                        return function () {
+                            var contentString = '<div id="content">'+
+                                '<div id="siteNotice">'+
+                                '</div>'+
+                                '<h2 style="margin: 0px;"><a href="'+location[i][2]+'" target="_blank">'+location[i][1]+'</a>&nbsp;&nbsp;&nbsp;'+Array(location[i][5]).join("★")+'</h2>'+
+                                '<div id="bodyContent">'+
+                                '<p style="margin: 0px;"><b>Location:</b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'+location[i][4]+'<br>' +
+                                '<b>Coordinates:</b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'+location[i][6]+', '+location[i][7]+'<br>'+
+                                '<b>Common Tags:</b>&nbsp;&nbsp;&nbsp;&nbsp;'+location[i][3]+'<br></p>'+
+                                '</div>'+
+                                '</div>';
+                
+                            infowindow.setContent(contentString);
+                            infowindow.open(map, marker);
+                        }
+                    })(marker, i)); 
+                    markers.push(marker)
+                }
+                
+                var container = document.querySelector('#mapToggle');
+            
+                container.addEventListener('click', function(){
+                    this.parentElement.classList.toggle('fullscreen');
+                    google.maps.event.trigger(map, "resize");
+                })
+                
+                var prevZIndex = new Queue();
+                $('#content1 .search-results .search-result').hover(
+                    // mouse in
+                    function () {
+                        var index = $('#content1 .search-results .search-result').index(this);
+                        markers[index].setIcon(highlightedSiteIcon());
+                        prevZIndex.enqueue( markers[index].getZIndex() );
+                        markers[index].setZIndex(google.maps.Marker.MAX_ZINDEX + 1);
+                    },
+                    // mouse out
+                    function () {
+                        var index = $('#content1 .search-results .search-result').index(this);
+                        markers[index].setIcon(normalSiteIcon());
+                        markers[index].setZIndex( prevZIndex.dequeue() );
+                    }
+                );
+                $('#content1 .search-results .search-result').click(
+                    function () {
+                        var i = $('#content1 .search-results .search-result').index(this);
+                        var contentString = '<div id="content">'+
+                            '<div id="siteNotice">'+
+                            '</div>'+
+                            '<h2 style="margin: 0px;"><a href="'+location[i][2]+'" target="_blank">'+location[i][1]+'</a>&nbsp;&nbsp;&nbsp;'+Array(location[i][5]).join("★")+'</h2>'+
+                            '<div id="bodyContent">'+
+                            '<p style="margin: 0px;"><b>Location:</b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'+location[i][4]+'<br>' +
+                            '<b>Coordinates:</b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'+location[i][6]+', '+location[i][7]+'<br>'+
+                            '<b>Common Tags:</b>&nbsp;&nbsp;&nbsp;&nbsp;'+location[i][3]+'<br></p>'+
+                            '</div>'+
+                            '</div>';
+            
+                        infowindow.setContent(contentString);
+                        infowindow.open(map, markers[i]);
+                    }
+                );
+                $('#content2 .search-results .search-result').hover(
+                    // mouse in
+                    function () {
+                        var index =  numSites + $('#content2 .search-results .search-result').index(this);
+                        markers[index].setIcon(highlightedBusinessIcon());
+                        prevZIndex.enqueue( markers[index].getZIndex() );
+                        markers[index].setZIndex(google.maps.Marker.MAX_ZINDEX + 1);
+                    },
+                    // mouse out
+                    function () {
+                        var index = numSites + $('#content2 .search-results .search-result').index(this);
+                        markers[index].setIcon(normalBusinessIcon());
+                        markers[index].setZIndex( prevZIndex.dequeue() );
+                    }
+                );
+                $('#content2 .search-results .search-result').click(
+                    function () {
+                        var i = numSites + $('#content2 .search-results .search-result').index(this);
+                        var contentString = '<div id="content">'+
+                            '<div id="siteNotice">'+
+                            '</div>'+
+                            '<h2 style="margin: 0px;"><a href="'+location[i][2]+'" target="_blank">'+location[i][1]+'</a>&nbsp;&nbsp;&nbsp;'+Array(location[i][5]).join("★")+'</h2>'+
+                            '<div id="bodyContent">'+
+                            '<p style="margin: 0px;"><b>Location:</b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'+location[i][4]+'<br>' +
+                            '<b>Coordinates:</b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'+location[i][6]+', '+location[i][7]+'<br>'+
+                            '<b>Common Tags:</b>&nbsp;&nbsp;&nbsp;&nbsp;'+location[i][3]+'<br></p>'+
+                            '</div>'+
+                            '</div>';
+            
+                        infowindow.setContent(contentString);
+                        infowindow.open(map, markers[i]);
+                    }
+                );
+            }
+            // functions that return icons
+            function normalSiteIcon() {
+                return {
+                    url: "{{ url_for('static', filename='scubadiving.png') }}"
+                };
+            }
+            function highlightedSiteIcon() {
+                return {
+                    url: "{{ url_for('static', filename='scubadiving2.png') }}"
+                };
+            }
+            function normalBusinessIcon() {
+                return {
+                    url: "{{ url_for('static', filename='supermarket.png') }}"
+                };
+            }
+            function highlightedBusinessIcon() {
+                return {
+                    url: "{{ url_for('static', filename='supermarket2.png') }}"
+                };
+            }
+        </script>
+    {% else %}
+        <div class="table">
+            <div class="tableCell">
+                <h1>Destination: Scuba</h1>
+                <form action="" method=get class=search-box>
+                    <input class="search-field" type=text name=q size=30 value="{{ q }}">
+                    <br>
+                    <br>
+                    <input class="search-button" type=submit value="Search For My Destination">
+                </form>
+            </div>
+        </div>
+    {% endif %}
+</body>
+</html>

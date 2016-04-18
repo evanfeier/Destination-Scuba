@@ -13,6 +13,21 @@ import json
 import heapq
 from pprint import pprint
 
+#remove when running with website stuff
+def main():
+    if len(sys.argv) != 4:
+        print "you must enter 3 arguments! \n1. latitude\n2. longitude\n3. number of sites and business you want retrieved\n\nExample: python DS_retriever.py 10.2 11.5 25"
+        sys.exit()
+    latitude = float(sys.argv[1])
+    longitude = float(sys.argv[2])
+    n = int(sys.argv[3])
+    
+    (sites, businesses) = retrieve_top_n_sites_businesses(latitude, longitude, n, "most reviewed")
+    print "**Top " + str(n) + " sites (within 45 miles)**\n"
+    pprint(sites)
+    print "\n**Top " + str(n) + " businesses (within 45 miles)**\n"
+    pprint(businesses)
+
 def retrieve_top_n_sites_businesses(latitude, longitude, n, select):
     sites = top_n(latitude, longitude, n, "diveBuddyCompleteData.json", select)     
     businesses = top_n(latitude, longitude, n, "yelpFullWithReviews.json", select)
@@ -80,5 +95,5 @@ class TopN(object):
         self.h.sort(reverse=True)
         return self.h
 
-#remove for website stuff
+#remove when running with website stuff
 if __name__ == "__main__": main()

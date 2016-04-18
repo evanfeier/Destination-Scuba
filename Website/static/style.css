@@ -127,6 +127,10 @@ ul {
     content: "";
     clear: both;
 }
+.title {
+    display: inline-block;
+    min-width: 114px;
+}
 
 /* Table */
 .table {

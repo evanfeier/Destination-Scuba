@@ -29,10 +29,10 @@
                     <li class="search-result">
                         <a class=title href="{{ site[2] }}">{{ site[1] }}</a> &nbsp;&nbsp;&nbsp;<span class=rating>{%- for i in range(site[5]) %}★{%- endfor %}</span>
                         {%- if site[4] %}
-                        <br><span class=location>Location: {{ site[4] }}</span>
+                        <br><span class=location><b>Location: </b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{ site[4] }}</span>
                         {%- endif %}
                         {%- if site[3] %}
-                        <br><span class=description>{{ site[3] }}</span>
+                        <br><span class=description><b>Common Tags: </b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{%- for i in range(site[3]|length) %}{%- if not i == 0 -%},&nbsp; {%- endif -%}{{ site[3][i] }}{%- endfor %}</span>
                         {%- endif %}
                 {%- else %}
                   <li><em>We did not find anything :-(</em>
@@ -46,10 +46,10 @@
                     <li class="search-result">
                         <a class=title href="{{ business[2] }}">{{ business[1] }}</a> &nbsp;&nbsp;&nbsp;<span class=rating>{%- for i in range(business[5]) %}★{%- endfor %}</span>
                         {%- if business[4] %}
-                        <br><span class=location>Location: {{ business[4] }}</span>
+                        <br><span class=location><b>Location: </b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{ business[4] }}</span>
                         {%- endif %}
                         {%- if business[3] %}
-                        <br><span class=description>{{ business[3] }}</span>
+                        <br><span class=description><b>Common Tags: </b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{%- for i in range(business[3]|length) %}{%- if not i == 0 -%},&nbsp; {%- endif -%}{{ business[3][i] }}{%- endfor %}</span>
                         {%- endif %}
                 {%- else %}
                   <li><em>We did not find anything :-(</em>
@@ -95,17 +95,7 @@
                     });
                     google.maps.event.addListener(marker, 'click', (function (marker, i) {
                         return function () {
-                            var contentString = '<div id="content">'+
-                                '<div id="siteNotice">'+
-                                '</div>'+
-                                '<h2 style="margin: 0px;"><a href="'+location[i][2]+'" target="_blank">'+location[i][1]+'</a>&nbsp;&nbsp;&nbsp;'+Array(location[i][5]).join("★")+'</h2>'+
-                                '<div id="bodyContent">'+
-                                '<p style="margin: 0px;"><b>Location:</b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'+location[i][4]+'<br>' +
-                                '<b>Coordinates:</b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'+location[i][6]+', '+location[i][7]+'<br>'+
-                                '<b>Common Tags:</b>&nbsp;&nbsp;&nbsp;&nbsp;'+location[i][3]+'<br></p>'+
-                                '</div>'+
-                                '</div>';
-                
+                            var contentString = createContentString(location[i]);
                             infowindow.setContent(contentString);
                             infowindow.open(map, marker);
                         }
@@ -139,17 +129,7 @@
                 $('#content1 .search-results .search-result').click(
                     function () {
                         var i = $('#content1 .search-results .search-result').index(this);
-                        var contentString = '<div id="content">'+
-                            '<div id="siteNotice">'+
-                            '</div>'+
-                            '<h2 style="margin: 0px;"><a href="'+location[i][2]+'" target="_blank">'+location[i][1]+'</a>&nbsp;&nbsp;&nbsp;'+Array(location[i][5]).join("★")+'</h2>'+
-                            '<div id="bodyContent">'+
-                            '<p style="margin: 0px;"><b>Location:</b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'+location[i][4]+'<br>' +
-                            '<b>Coordinates:</b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'+location[i][6]+', '+location[i][7]+'<br>'+
-                            '<b>Common Tags:</b>&nbsp;&nbsp;&nbsp;&nbsp;'+location[i][3]+'<br></p>'+
-                            '</div>'+
-                            '</div>';
-            
+                        var contentString = createContentString(location[i]);
                         infowindow.setContent(contentString);
                         infowindow.open(map, markers[i]);
                     }
@@ -172,17 +152,7 @@
                 $('#content2 .search-results .search-result').click(
                     function () {
                         var i = numSites + $('#content2 .search-results .search-result').index(this);
-                        var contentString = '<div id="content">'+
-                            '<div id="siteNotice">'+
-                            '</div>'+
-                            '<h2 style="margin: 0px;"><a href="'+location[i][2]+'" target="_blank">'+location[i][1]+'</a>&nbsp;&nbsp;&nbsp;'+Array(location[i][5]).join("★")+'</h2>'+
-                            '<div id="bodyContent">'+
-                            '<p style="margin: 0px;"><b>Location:</b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'+location[i][4]+'<br>' +
-                            '<b>Coordinates:</b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'+location[i][6]+', '+location[i][7]+'<br>'+
-                            '<b>Common Tags:</b>&nbsp;&nbsp;&nbsp;&nbsp;'+location[i][3]+'<br></p>'+
-                            '</div>'+
-                            '</div>';
-            
+                        var contentString = createContentString(location[i]);
                         infowindow.setContent(contentString);
                         infowindow.open(map, markers[i]);
                     }
@@ -208,6 +178,31 @@
                 return {
                     url: "{{ url_for('static', filename='supermarket2.png') }}"
                 };
+            }
+            function createContentString(info) {
+                var contentString = '<div id="content">'+
+                    '<div id="siteNotice">'+
+                    '</div>'+
+                    '<h2 style="margin: 0px;"><a href="'+info[2]+'" target="_blank" style="display: inline-block; min-width: 87px;">'+info[1]+'</a>&nbsp;&nbsp;&nbsp;'+Array(info[5]).join("★")+'</h2>'+
+                    '<div id="bodyContent">'+
+                    '<p style="margin: 0px;"><b>Location:</b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'+info[4]+'<br>' +
+                    '<b>Coordinates:</b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'+info[6]+', '+info[7]+'<br>';
+                if (info[3].length > 0) {
+                    contentString += '<b>Common Tags:</b>&nbsp;&nbsp;&nbsp;&nbsp;';
+                    for (j = 0; j < info[3].length; j++) {
+                        if (j > 0) {
+                            contentString += ", " + info[3][j];
+                        }
+                        else {
+                            contentString += info[3][j];
+                        }
+                    }
+                    contentString += '<br></p>';
+                }
+                contentString += '</div>'+
+                    '</div>';
+                
+                return contentString;
             }
         </script>
     {% else %}

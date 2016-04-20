@@ -2,7 +2,6 @@ html, body {
     height: 100%;
     width: 100%;
     margin: 0px;
-    min-width: 1025px;
 }
 ul {
     list-style: none;
@@ -56,12 +55,15 @@ ul {
 .header .search-box {
     float: right;
     height: 40px;
+    max-width: calc(100% - 176px);
 }
 .header .search-field {
     width: 300px;
+    max-width: calc(100% - 77px - 12px);
+    float: left;
     height: 30px;
     margin-top: 5px;
-    float: left;
+
 }
 .header .search-button {
     float: left;

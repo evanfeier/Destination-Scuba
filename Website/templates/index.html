@@ -27,15 +27,15 @@
                 <ul class=search-results>
                 {%- for site in sites %}
                     <li class="search-result">
-                        <a class=title href="{{ site[2] }}">{{ site[1] }}</a> &nbsp;&nbsp;&nbsp;<span class=rating>{%- for i in range(site[5]) %}★{%- endfor %}</span>
+                        <a class=title href="{{ site[2] }}">{{ site[1] }}</a> &nbsp;&nbsp;&nbsp;&#8203;<span class=rating>{%- for i in range(site[5]) %}★{%- endfor %}</span>
                         {%- if site[4] %}
                         <br><span class=location><b>Location: </b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{ site[4] }}</span>
                         {%- endif %}
                         {%- if site[3] %}
-                        <br><span class=description><b>Common Tags: </b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{%- for i in range(site[3]|length) %}{%- if not i == 0 -%},&nbsp; {%- endif -%}{{ site[3][i] }}{%- endfor %}</span>
+                        <br><span class=description><b>Common Tags: </b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{%- for i in range(site[3]|length) %}{%- if not i == 0 -%},&nbsp;&#8203; {%- endif -%}{{ site[3][i] }}{%- endfor %}</span>
                         {%- endif %}
                 {%- else %}
-                  <li><em>We did not find anything :-(</em>
+                  <li style="text-align: center;"><em>We did not find anything within {{ radius }} miles :-(</em><br><a class=title href="/?q={{ q }}&r={{ radius * 2 }}">Increase search distance</a>
                 {%- endfor %}
                 </ul>
             </div>
@@ -49,10 +49,10 @@
                         <br><span class=location><b>Location: </b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{ business[4] }}</span>
                         {%- endif %}
                         {%- if business[3] %}
-                        <br><span class=description><b>Common Tags: </b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{%- for i in range(business[3]|length) %}{%- if not i == 0 -%},&nbsp; {%- endif -%}{{ business[3][i] }}{%- endfor %}</span>
+                        <br><span class=description><b>Common Tags: </b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{%- for i in range(business[3]|length) %}{%- if not i == 0 -%},&nbsp;&#8203; {%- endif -%}{{ business[3][i] }}{%- endfor %}</span>
                         {%- endif %}
                 {%- else %}
-                  <li><em>We did not find anything :-(</em>
+                  <li style="text-align: center;"><em>We did not find anything within {{ radius }} miles :-(</em><br><a class=title href="/?q={{ q }}&r={{ radius * 2 }}">Increase search distance</a>
                 {%- endfor %}
                 </ul>
             </div>
@@ -78,6 +78,8 @@
                 });
                 var markers = []
                 
+                var bounds = new google.maps.LatLngBounds();
+                bounds.extend(marker.position);
                 var infowindow = new google.maps.InfoWindow();
                 for (var i = 0; i < location.length; i++) {
                     var image = normalSiteIcon();
@@ -93,6 +95,8 @@
                         icon: image,
                         title: location[i][1]
                     });
+                    //extend the bounds to include each marker's position
+                    bounds.extend(marker.position);
                     google.maps.event.addListener(marker, 'click', (function (marker, i) {
                         return function () {
                             var contentString = createContentString(location[i]);
@@ -101,6 +105,11 @@
                         }
                     })(marker, i)); 
                     markers.push(marker)
+                }
+                
+                //now fit the map to the newly inclusive bounds
+                if (location.length > 1) {
+                    map.fitBounds(bounds);
                 }
                 
                 var container = document.querySelector('#mapToggle');

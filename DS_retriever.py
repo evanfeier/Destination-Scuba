@@ -13,28 +13,13 @@ import json
 import heapq
 from pprint import pprint
 
-#remove when running with website stuff
-def main():
-    if len(sys.argv) != 4:
-        print "you must enter 3 arguments! \n1. latitude\n2. longitude\n3. number of sites and business you want retrieved\n\nExample: python DS_retriever.py 10.2 11.5 25"
-        sys.exit()
-    latitude = float(sys.argv[1])
-    longitude = float(sys.argv[2])
-    n = int(sys.argv[3])
-    
-    (sites, businesses) = retrieve_top_n_sites_businesses(latitude, longitude, n, "most reviewed")
-    print "**Top " + str(n) + " sites (within 45 miles)**\n"
-    pprint(sites)
-    print "\n**Top " + str(n) + " businesses (within 45 miles)**\n"
-    pprint(businesses)
-
-def retrieve_top_n_sites_businesses(latitude, longitude, n, select):
-    sites = top_n(latitude, longitude, n, "diveBuddyCompleteData.json", select)     
-    businesses = top_n(latitude, longitude, n, "yelpFullWithReviews.json", select)
+def retrieve_top_n_sites_businesses(latitude, longitude, n, select, radius):
+    sites = top_n(latitude, longitude, n, "diveBuddyCompleteData.json", select, radius)     
+    businesses = top_n(latitude, longitude, n, "yelpFullWithReviews.json", select, radius)
     return sites, businesses
 
-def top_n(lat, lng, n, file_name, select):
-    distance = 72 # 72 kilometers ~ 45 miles
+def top_n(lat, lng, n, file_name, select, radius):
+    distance = 1.6 * radius; # 72 kilometers ~ 45 miles
     min_lat, min_lng, max_lat, max_lng = find_bounds(lat, lng, distance)
     top_n = TopN(n)
     custom_select = 1 if file_name == "diveBuddyCompleteData.json" else 0 #only used if using "custom"
@@ -94,6 +79,3 @@ class TopN(object):
     def result(self):
         self.h.sort(reverse=True)
         return self.h
-
-#remove when running with website stuff
-if __name__ == "__main__": main()

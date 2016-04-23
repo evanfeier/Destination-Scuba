@@ -8,12 +8,10 @@ import re
 def tfIdf(data, minWordSize = 3):
   dTF = {}
   dF = {}
-  wordLists = []
   biwordList = []
   for item in data:
     #print item
     wordList = re.findall(r"[a-zA-Z]+", item["reviewtext"])
-    wordLists.append(wordList)
     key = item["link"]
     dTF[key] = {}
     # 1 - Find the TF (term frequency)

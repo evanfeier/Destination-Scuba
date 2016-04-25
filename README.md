@@ -8,6 +8,6 @@ Flask
 
 To Run:  
 1. Flatten the first level directory  
-2. [Install Flask](http://flask.pocoo.org/)
+2. [Install Flask](http://flask.pocoo.org/)  
 3. Run app.py: python app.py  
 4. Open the url  

@@ -6,8 +6,8 @@ The main algorithm can be found in DS_retriever.py and in the folder ReviewClump
 ## Utilized Dependencies
 Flask
 
-To Run:
-1. Flatten the first level directory
-2. Install Flask: pip install Flask
-3. Run app.py: python app.py
-4. Open the url
+To Run:  
+1. Flatten the first level directory  
+2. Install Flask: pip install Flask  
+3. Run app.py: python app.py  
+4. Open the url  

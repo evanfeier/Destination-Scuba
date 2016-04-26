@@ -3,6 +3,57 @@ html, body {
     width: 100%;
     margin: 0px;
 }
+html {
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    background-position: center center;
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    -o-background-size: cover;
+    background-size: cover;
+}
+.map.fullscreen ~ .picInfo {
+    display: none;
+}
+.picInfo {
+    position: fixed;
+    bottom: 0px;
+    right: 0px;
+    padding: 10px;
+    text-align: center;
+    color: rgba(255,255,255, 0.6);
+    width: 7px;
+    height: 18px;
+    z-index: 10;
+}
+.picInfo:hover {
+    width: 58px;
+    height: 36px;
+    padding: 20px;
+}
+.picInfo:hover span {
+    display: none;
+}
+.picInfo a {
+    color: #000;
+}
+.picInfo .info {
+    color: #000;
+    position: fixed;
+    width: 58px;
+    height: 36px;
+    padding: 20px;
+    right: -96px;
+    bottom: -76px;
+    background-color: rgba(255,255,255, 0.8);
+    -webkit-transition: background 0.5s, bottom 0.5s, right 0.5s;
+    transition: background 0.5s, bottom 0.5s, right 0.5s;
+}
+.picInfo:hover .info {
+    right: 0px;
+    bottom: 0px;
+    background-color: rgba(255,255,255, 0.8);
+}
 ul {
     list-style: none;
     margin: 0px;
@@ -11,6 +62,8 @@ ul {
 
 /* Map */
 .map {
+    opacity: 0.95;
+    background-color: #fff;
     position: relative;
     height: 30%;
     max-height: 300px;
@@ -20,7 +73,10 @@ ul {
 }
 .map.fullscreen {
     height: 100%;
-    max-height: calc(100% - 40px)
+    max-height: calc(100% - 40px - 2px)
+}
+.map.fullscreen ~ #core {
+    display: none;
 }
 #mapToggle {
     position: absolute;
@@ -42,6 +98,7 @@ ul {
 .header {
     height: 40px;
     width: 100%;
+    background-color: rgba(255,255,255,0.8);
 }
 .header .siteName {
     display: inline-block;
@@ -79,12 +136,13 @@ ul {
     padding-left: 25px;
     padding-right: 25px;
     margin: 25px auto 0px auto;
-    min-height: calc(100% - 40px - 30% - 25px);
+    min-height: calc(100% - 40px - 30% - 25px - 2px);
     -moz-box-sizing: border-box;
     -webkit-box-sizing: border-box;
     box-sizing: border-box;
 }
 .column {
+    background-color: rgba(255,255,255,0.8);
     width: calc(50% - 25px/2);
     height: 100%;
     position: absolute;
@@ -133,6 +191,17 @@ ul {
     display: inline-block;
     min-width: 114px;
 }
+.locationTitle, .descriptionTitle {
+    display: inline-block;
+    width: 133px;
+    max-width: 100%;
+    vertical-align: top;
+}
+.location, .description {
+    display: inline-block;
+    width: calc(100% - 133px);
+    max-width: 100%;
+}
 
 /* Table */
 .table {
@@ -145,6 +214,9 @@ ul {
     vertical-align: middle;
     text-align: center;
 }
+.tableCell h1 {
+    color: rgba(255,255,255,0.8);
+}
 
 /* Search */
 .search-field {
@@ -154,7 +226,7 @@ ul {
     -moz-box-sizing: border-box;
     -webkit-box-sizing: border-box;
     box-sizing: border-box;
-    background-color: #fff;
+    background-color: rgba(255,255,255,0.6);
     border: 1px solid #d9d9d9;
     outline: none;
     height: 45px;
@@ -167,6 +239,7 @@ ul {
     border: 1px solid #4d90fe;
 }
 .search-button {
+    opacity: 0.7;
     background-image: -webkit-gradient(linear,left top,left bottom,from(#f5f5f5),to(#f1f1f1));
     background-image: -webkit-linear-gradient(top,#f5f5f5,#f1f1f1);
     -webkit-border-radius: 2px;

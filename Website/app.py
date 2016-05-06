@@ -10,7 +10,7 @@ app = Flask(__name__)
 @app.route('/')
 def hello():
     q = request.args.get('q') or ''
-    n = request.args.get('n') or 20
+    n = request.args.get('n') or 50
     n = max(int(n), 20)
     radius = request.args.get('r') or 45
     radius = max(int(radius), 45)
@@ -29,10 +29,10 @@ def hello():
         longitude =  resp_json_payload['results'][0]['geometry']['location'].get("lng", "")
         sites = []
         businesses = []
-        (sites, businesses) = retrieve_top_n_sites_businesses(latitude, longitude, n, "most reviewed", radius)
+        (sites, businesses) = retrieve_top_n_sites_businesses(latitude, longitude, n, "custom log", radius)
         while not sites and not businesses:
             radius = 2 * radius
-            (sites, businesses) = retrieve_top_n_sites_businesses(latitude, longitude, n, "most reviewed", radius)
+            (sites, businesses) = retrieve_top_n_sites_businesses(latitude, longitude, n, "custom log", radius)
         locationlist = json.dumps(sites + businesses)
         
         return render_template('index.html', sites=sites, businesses=businesses, q=q, latitude=latitude, longitude=longitude, locationlist=locationlist, businesslist=businesslist, radius=radius)

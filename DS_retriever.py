@@ -12,6 +12,7 @@ from geolocation import GeoLocation
 import json
 import heapq
 from pprint import pprint
+import math
 
 def retrieve_top_n_sites_businesses(latitude, longitude, n, select, radius):
     sites = top_n(latitude, longitude, n, "diveBuddyCompleteData.json", select, radius)     
@@ -62,6 +63,8 @@ def score(rating, num_reviews, select, custom_select):
             avg = 3.86466165414  #yelp avg
         m = 5 #min reviews to be considered
         return (num_reviews*rating + m*avg) / (num_reviews + m)
+    if select == "custom log":
+        return rating*math.log(num_reviews + 1, 2)
 
 # container for heapq to limit the size to n
 class TopN(object):
